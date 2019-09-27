@@ -1,11 +1,12 @@
 package top.shahow.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import top.shahow.entity.Borrower;
 
 @Repository
-public interface IBorrowerDao extends JpaRepository<Borrower, Integer>{
+public interface IBorrowerDao extends JpaRepository<Borrower, Integer>, JpaSpecificationExecutor<Borrower>{
 
 }
