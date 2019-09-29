@@ -9,5 +9,5 @@ import top.shahow.entity.Staff;
 
 @Repository
 public interface IStaffDao extends JpaRepository<Staff, Integer>, JpaSpecificationExecutor<Staff>{
-
+	public Staff findByName(String name);
 }

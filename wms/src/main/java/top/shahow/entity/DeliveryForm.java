@@ -23,15 +23,15 @@ public class DeliveryForm {
 	@Column(name = "id")
 	private int id;
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "productId")
+	@JoinColumn(name = "product_id")
 	private Product product;
-	@Column(name = "productNum")
+	@Column(name = "product_num")
 	private int productNum;
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "staffId")
+	@JoinColumn(name = "staff_id")
 	private Staff staff;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "deliveryDate")
+	@Column(name = "delivery_date")
 	private Date deliveryDate;
 	public int getId() {
 		return id;

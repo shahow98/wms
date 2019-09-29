@@ -8,5 +8,5 @@ import top.shahow.entity.WareHouse;
 
 @Repository
 public interface IWareHouseDao extends JpaRepository<WareHouse, Integer>, JpaSpecificationExecutor<WareHouse>{
-
+	public WareHouse findByProduct_Id(int productId);
 }

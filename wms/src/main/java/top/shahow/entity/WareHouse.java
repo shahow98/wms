@@ -18,9 +18,9 @@ public class WareHouse {
 	@Column(name = "id")
 	private int id;
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "productId")
+	@JoinColumn(name = "product_id")
 	private Product product;
-	@Column(name = "productNum")
+	@Column(name = "product_num")
 	private int productNum;
 	public int getId() {
 		return id;
