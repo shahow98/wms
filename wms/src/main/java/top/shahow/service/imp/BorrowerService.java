@@ -1,11 +1,12 @@
 package top.shahow.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import top.shahow.dao.IBorrowerDao;
 import top.shahow.entity.Borrower;
 import top.shahow.service.IBorrowerService;
-
+@Service
 public class BorrowerService implements IBorrowerService{
 
 	@Autowired

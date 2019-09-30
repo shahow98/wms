@@ -2,12 +2,13 @@ package top.shahow.service;
 
 import top.shahow.entity.BorrowFrom;
 import top.shahow.entity.DeliveryForm;
+import top.shahow.entity.Product;
 import top.shahow.entity.StockForm;
 import top.shahow.entity.WareHouse;
 
 public interface IWareHouseService {
 	// 进货
-	public WareHouse stock(StockForm stockForm);
+	public WareHouse stock(StockForm stockForm, Product product);
 
 	// 出货
 	public WareHouse delivery(DeliveryForm deliveryForm);

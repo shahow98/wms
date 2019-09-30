@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>登录</title>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	</head>
+	<body>
+		<div id="app">
+			<el-row>
+				<el-col :span="12"  :offset="6">
+					<el-card class="box-card">
+						<el-form
+						 :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+							<el-form-item label="姓名" prop="name">
+								<el-input type="text" v-model="ruleForm.name" autocomplete="off"></el-input>
+							</el-form-item>
+							<el-form-item label="密码" prop="pass">
+								<el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+								<el-button @click="resetForm('ruleForm')">重置</el-button>
+							</el-form-item>
+						</el-form>
+					</el-card>
+				</el-col>
+			</el-row>
+
+
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
+	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+	<script type="text/javascript">
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$qs", {
+					writable: false,
+					value: window.Qs
+				});
+			}
+		});
+		new Vue({
+			el: '#app',
+			data: function() {
+				var checkName = (rule, value, callback) => {
+					if (!value) {
+						return callback(new Error('姓名不能为空'));
+					}
+					setTimeout(() => {
+						callback();
+					}, 1000);
+				};
+				var validatePass = (rule, value, callback) => {
+					if (value === '') {
+						callback(new Error('请输入密码'));
+					} else {
+						callback();
+					}
+				};
+				return {
+					ruleForm: {
+						name: '',
+						pass: ''
+					},
+					rules: {
+						name: [{
+							validator: checkName,
+							trigger: 'blur'
+						}],
+						pass: [{
+							validator: validatePass,
+							trigger: 'blur'
+						}]
+					}
+				};
+			},
+			methods: {
+				submitForm(formName) {
+					this.$refs[formName].validate((valid) => {
+						if (valid) {
+							axios.post('/wms/staff/login', this.$qs.stringify({
+									name: this.$data.ruleForm.name,
+									password: this.$data.ruleForm.pass
+								}))
+								.then(function(response) {
+									console.log(response.data)
+									var res = JSON.parse(response.data);
+									if(res == true){
+										window.location.href = "/wms/welcome";
+									}
+								})
+								.catch(function(err) {
+									console.log(err)
+								});
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				},
+				resetForm(formName) {
+					this.$refs[formName].resetFields();
+				}
+			}
+		})
+	</script>
+</html>

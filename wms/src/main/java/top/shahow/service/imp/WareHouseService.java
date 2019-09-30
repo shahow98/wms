@@ -1,9 +1,11 @@
 package top.shahow.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import top.shahow.dao.IBorrowFormDao;
 import top.shahow.dao.IDeliveryFormDao;
+import top.shahow.dao.IProductDao;
 import top.shahow.dao.IStockFormDao;
 import top.shahow.dao.IWareHouseDao;
 import top.shahow.entity.BorrowFrom;
@@ -12,7 +14,7 @@ import top.shahow.entity.Product;
 import top.shahow.entity.StockForm;
 import top.shahow.entity.WareHouse;
 import top.shahow.service.IWareHouseService;
-
+@Service
 public class WareHouseService implements IWareHouseService{
 
 	@Autowired
@@ -23,12 +25,15 @@ public class WareHouseService implements IWareHouseService{
 	private IDeliveryFormDao deliveryFormDao;
 	@Autowired
 	private IBorrowFormDao borrowerDao;
+	@Autowired
+	private IProductDao productDao;
 	
 	@Override
-	public WareHouse stock(StockForm stockForm) {
+	public WareHouse stock(StockForm stockForm, Product product) {
 		// TODO Auto-generated method stub
+		product = productDao.findByName(product.getName());
+		stockForm.setProduct(product);
 		stockFormDao.save(stockForm);
-		Product product = stockForm.getProduct();
 		WareHouse wareHouse =  wareHouseDao.findByProduct_Id(product.getId());
 		if(wareHouse == null) {
 			wareHouse = new WareHouse();

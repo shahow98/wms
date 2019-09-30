@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<base href="/wms/html/" />
+		<meta charset="utf-8">
+		<title>进货管理</title>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	</head>
+	<body>
+		<div id="app">
+			<el-container>
+				<el-header>
+					<el-row type="flex" justify="space-between">
+						<el-col :span="6">
+							<i class="el-icon-box">仓库管理系统 </i>
+						</el-col>
+						<el-col :span="4">
+							<el-menu mode="horizontal" @select="handleSelect" v-if="!isLogin">
+								<el-menu-item index="1" @click="signIn">登录</el-menu-item>
+								<el-menu-item index="2">
+									<el-button type="warning" plain>注册</el-button>
+								</el-menu-item>
+							</el-menu>
+						</el-col>
+					</el-row>
+				</el-header>
+				<el-container>
+					<el-aside width="200px">
+						<el-menu @open="handleOpen" @close="handleClose">
+							<el-menu-item index="1">
+								<i class="el-icon-document"></i>
+								<span slot="title">进货记录</span>
+							</el-menu-item>
+							<el-menu-item index="2">
+								<i class="el-icon-document"></i>
+								<span slot="title">进货登记</span>
+							</el-menu-item>
+						</el-menu>
+					</el-aside>
+					<el-container>
+						<el-main>Main</el-main>
+					</el-container>
+				</el-container>
+			</el-container>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
+	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '#app',
+			data: function() {
+				return {
+					value: true,
+					isLogin: true
+				}
+			},
+			methods: {
+				handleOpen(key, keyPath) {
+					console.log(key, keyPath);
+				},
+				handleClose(key, keyPath) {
+					console.log(key, keyPath);
+				},
+				signIn() {
+					window.location.href = "/wms/signin";
+				}
+			}
+		})
+		axios.get('/wms/staff/islogin')
+			.then(function(response) {
+				var res = JSON.parse(response.data);
+				if (res != null) {
+					app.isLogin = true;
+				} else {
+					app.isLogin = false;
+				}
+			})
+			.catch(function(err) {
+				console.log(err)
+			});
+	</script>
+	<style>
+		.el-header,
+		.el-footer {
+			background-color: #B3C0D1;
+			color: #333;
+			text-align: left;
+			line-height: 60px;
+			font-size: 20px;
+			font-weight: bold;
+		}
+
+		.el-aside {
+			background-color: #D3DCE6;
+			color: #333;
+			text-align: center;
+			line-height: 200px;
+		}
+
+		.el-main {
+			background-color: #E9EEF3;
+			color: #333;
+			text-align: center;
+			line-height: 160px;
+		}
+
+		body>.el-container {
+			margin-bottom: 40px;
+		}
+
+		.el-container:nth-child(5) .el-aside,
+		.el-container:nth-child(6) .el-aside {
+			line-height: 260px;
+		}
+
+		.el-container:nth-child(7) .el-aside {
+			line-height: 320px;
+		}
+	</style>
+</html>
