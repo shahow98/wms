@@ -22,12 +22,12 @@ public class DeliveryForm {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private int id;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "product_id")
 	private Product product;
 	@Column(name = "product_num")
 	private int productNum;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "staff_id")
 	private Staff staff;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

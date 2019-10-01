@@ -1,5 +1,7 @@
 package top.shahow.service.imp;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,13 @@ public class StaffService implements IStaffService {
 			flag = true;
 		}
 		return flag;
+	}
+
+	@Override
+	public Staff getStaffById(int id) {
+		// TODO Auto-generated method stub
+		Optional<Staff> staff = staffDao.findById(id);
+		return staff.get();
 	}
 
 }

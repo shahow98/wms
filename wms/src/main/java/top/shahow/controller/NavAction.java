@@ -17,4 +17,12 @@ public class NavAction {
 	public String signIn() {
 		return "forward:/html/signin.html";
 	}
+	@RequestMapping(value = "stock")
+	public String stock() {
+		return "forward:/html/stock.html";
+	}
+	@RequestMapping(value = "delivery")
+	public String delivery() {
+		return "forward:/html/delivery.html";
+	}
 }

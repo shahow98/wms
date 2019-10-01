@@ -27,18 +27,51 @@
 				<el-container>
 					<el-aside width="200px">
 						<el-menu @open="handleOpen" @close="handleClose">
-							<el-menu-item index="1">
+							<el-menu-item index="1" @click="getStockForms">
 								<i class="el-icon-document"></i>
 								<span slot="title">进货记录</span>
 							</el-menu-item>
-							<el-menu-item index="2">
+							<el-menu-item index="2" @click="getStockForm">
 								<i class="el-icon-document"></i>
 								<span slot="title">进货登记</span>
 							</el-menu-item>
 						</el-menu>
 					</el-aside>
 					<el-container>
-						<el-main>Main</el-main>
+						<el-main>
+							<el-row>
+								<el-col :span="12" :offset="6">
+									<el-card  shadow="hover" v-if="showStockForm">
+										<el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+											<el-form-item label="货物名" prop="productName">
+												<el-input type="text" v-model="ruleForm.productName" autocomplete="off"></el-input>
+											</el-form-item>
+											<el-form-item label="货物数" prop="productNum">
+												<el-input type="number" v-model="ruleForm.productNum" autocomplete="off"></el-input>
+											</el-form-item>
+											<el-form-item>
+												<el-button type="primary" @click="submitForm('ruleForm')">进货</el-button>
+												<el-button @click="resetForm('ruleForm')">重置</el-button>
+											</el-form-item>
+										</el-form>
+									</el-card>
+								</el-col>
+								<el-col :span="20" :offset="2">
+									<el-card  shadow="hover" v-loading="tableLoading" v-if="showStockTable">
+										<el-table :data="tableData" stripe style="width: 100%">
+											<el-table-column prop="stockDate" label="进货日期" width="180">
+											</el-table-column>
+											<el-table-column prop="product.name" label="货物名" width="180">
+											</el-table-column>
+											<el-table-column prop="productNum" label="货物数" width="180">
+											</el-table-column>
+											<el-table-column prop="staff.name" label="登记人">
+											</el-table-column>
+										</el-table>
+									</el-card>
+								</el-col>
+							</el-row>
+						</el-main>
 					</el-container>
 				</el-container>
 			</el-container>
@@ -49,26 +82,115 @@
 	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
 	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
 	<script type="text/javascript">
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$qs", {
+					writable: false,
+					value: window.Qs
+				});
+			}
+		});
 		var app = new Vue({
 			el: '#app',
 			data: function() {
+				var checkName = (rule, value, callback) => {
+					if (!value) {
+						return callback(new Error('货物名不能为空'));
+					}
+					setTimeout(() => {
+						callback();
+					}, 1000);
+				};
+				var checkNum = (rule, value, callback) => {
+					if (!value) {
+						return callback(new Error('货物数不能为空'));
+					}
+					setTimeout(() => {
+						callback();
+					}, 1000);
+				};
 				return {
 					value: true,
-					isLogin: true
-				}
+					isLogin: true,
+					showStockForm: false,
+					showStockTable: false,
+					ruleForm: {
+						productName: '',
+						productNum: ''
+					},
+					rules: {
+						productName: [{
+							validator: checkName,
+							trigger: 'blur'
+						}],
+						productNum: [{
+							validator: checkNum,
+							trigger: 'blur'
+						}]
+					},
+					tableData: [],
+					tableLoading: true
+				};
 			},
 			methods: {
+				handleSelect(key, keyPath) {
+					console.log(key, keyPath);
+				},
 				handleOpen(key, keyPath) {
 					console.log(key, keyPath);
 				},
 				handleClose(key, keyPath) {
 					console.log(key, keyPath);
 				},
+				submitForm(formName) {
+					this.$refs[formName].validate((valid) => {
+						if (valid) {
+							axios.post('/wms/warehouse/stock', this.$qs.stringify({
+									productName: this.$data.ruleForm.productName,
+									productNum: this.$data.ruleForm.productNum
+								}))
+								.then(function(response) {
+									console.log(response.data);
+									console.log(response.status);
+									console.log(response.statusText);
+									console.log(response.headers);
+									console.log(response.config);
+								})
+								.catch(function(err) {
+									console.log(err)
+								});
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				},
+				resetForm(formName) {
+					this.$refs[formName].resetFields();
+				},
 				signIn() {
 					window.location.href = "/wms/signin";
+				},
+				getStockForms(){
+					app.showStockTable = true;
+					app.showStockForm = false;
+					axios.get('/wms/warehouse/getStockForms')
+						.then(function(response) {
+							var res = JSON.parse(response.data);
+							app.tableData = res;
+							app.tableLoading = false;
+						})
+						.catch(function(err) {
+							console.log(err)
+						});
+				},
+				getStockForm(){
+					app.showStockTable = false;
+					app.showStockForm = true;
+					app.tableLoading = true;
 				}
 			}
-		})
+		});
 		axios.get('/wms/staff/islogin')
 			.then(function(response) {
 				var res = JSON.parse(response.data);
@@ -82,42 +204,5 @@
 				console.log(err)
 			});
 	</script>
-	<style>
-		.el-header,
-		.el-footer {
-			background-color: #B3C0D1;
-			color: #333;
-			text-align: left;
-			line-height: 60px;
-			font-size: 20px;
-			font-weight: bold;
-		}
 
-		.el-aside {
-			background-color: #D3DCE6;
-			color: #333;
-			text-align: center;
-			line-height: 200px;
-		}
-
-		.el-main {
-			background-color: #E9EEF3;
-			color: #333;
-			text-align: center;
-			line-height: 160px;
-		}
-
-		body>.el-container {
-			margin-bottom: 40px;
-		}
-
-		.el-container:nth-child(5) .el-aside,
-		.el-container:nth-child(6) .el-aside {
-			line-height: 260px;
-		}
-
-		.el-container:nth-child(7) .el-aside {
-			line-height: 320px;
-		}
-	</style>
 </html>

@@ -10,23 +10,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 
-import top.shahow.entity.Staff;
-import top.shahow.service.IStaffService;
+import top.shahow.entity.Borrower;
+import top.shahow.service.IBorrowerService;
 
 @Controller
-@RequestMapping("staff")
-public class StaffAction {
+@RequestMapping("borrower")
+public class BorrowerAction {
 	@Autowired
-	private IStaffService staffService;
+	private IBorrowerService borrowerService;
 	
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	@ResponseBody
-	public String login(Staff user, HttpSession session) {
-		
+	public String login(Borrower user, HttpSession session) {
 		boolean flag = false;
-		Staff staff = staffService.login(user);
-		if(staff != null) {
-			session.setAttribute("staff_login", staff);
+		Borrower borrower = borrowerService.login(user);
+		if(borrower != null) {
+			session.setAttribute("borrower_login", borrower);
 			flag = true;
 		}
 		Gson gson = new Gson();
@@ -35,20 +34,18 @@ public class StaffAction {
 	
 	@RequestMapping(value = "register", method = RequestMethod.POST)
 	@ResponseBody
-	public String register(Staff user) {
+	public String register(Borrower user) {
 		boolean flag = false;
-		flag = staffService.register(user);
+		flag = borrowerService.register(user);
 		Gson gson = new Gson();
 		return gson.toJson(flag);
 	}
-	
-	
 	@RequestMapping(value = "islogin", method = RequestMethod.GET)
 	@ResponseBody
 	public String isLogin(HttpSession session) {
-		Staff staff = (Staff) session.getAttribute("staff_login");
+		Borrower borrower = (Borrower) session.getAttribute("borrower_login");
 		Gson gson = new Gson();
+		return gson.toJson(borrower);
 		
-		return gson.toJson(staff);
 	}
 }
