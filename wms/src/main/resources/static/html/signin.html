@@ -8,15 +8,20 @@
 	<body>
 		<div id="app">
 			<el-row>
-				<el-col :span="12"  :offset="6">
+				<el-col :span="12" :offset="6">
 					<el-card class="box-card">
-						<el-form
-						 :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+						<el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
 							<el-form-item label="姓名" prop="name">
 								<el-input type="text" v-model="ruleForm.name" autocomplete="off"></el-input>
 							</el-form-item>
-							<el-form-item label="密码" prop="pass">
+							<el-form-item label="密码" prop="pass" v-if="needPass">
 								<el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+							</el-form-item>
+							<el-form-item label="身份选择" prop="identity">
+								<el-radio-group v-model="ruleForm.identity">
+									<el-radio label="员工"></el-radio>
+									<el-radio label="游客"></el-radio>
+								</el-radio-group>
 							</el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
@@ -34,6 +39,7 @@
 	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
 	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
 	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+	 <script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
 	<script type="text/javascript">
 		Vue.use({
 			install(Vue) {
@@ -43,7 +49,14 @@
 				});
 			}
 		});
-		new Vue({
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$cookies", {
+					value:  window.$cookies
+				});
+			}
+		});
+		var app = new Vue({
 			el: '#app',
 			data: function() {
 				var checkName = (rule, value, callback) => {
@@ -61,10 +74,19 @@
 						callback();
 					}
 				};
+				var alterForm = (rule, value, callback) => {
+					if (value === '员工') {
+						app.needPass = true;
+					} else if (value === '游客') {
+						app.needPass = false;
+					}
+					callback();
+				};
 				return {
 					ruleForm: {
 						name: '',
-						pass: ''
+						pass: '',
+						identity: '员工'
 					},
 					rules: {
 						name: [{
@@ -74,28 +96,53 @@
 						pass: [{
 							validator: validatePass,
 							trigger: 'blur'
+						}],
+						identity: [{
+							validator: alterForm,
+							trigger: 'change'
 						}]
-					}
+					},
+					needPass: true
 				};
 			},
 			methods: {
 				submitForm(formName) {
 					this.$refs[formName].validate((valid) => {
 						if (valid) {
-							axios.post('/wms/staff/login', this.$qs.stringify({
-									name: this.$data.ruleForm.name,
-									password: this.$data.ruleForm.pass
-								}))
-								.then(function(response) {
-									console.log(response.data)
-									var res = JSON.parse(response.data);
-									if(res == true){
-										window.location.href = "/wms/welcome";
-									}
-								})
-								.catch(function(err) {
-									console.log(err)
-								});
+							var identity = this.$data.ruleForm.identity;
+							if (identity === '员工') {
+								axios.post('/wms/staff/login', this.$qs.stringify({
+										name: this.$data.ruleForm.name,
+										password: this.$data.ruleForm.pass
+									}))
+									.then(function(response) {
+										console.log(response.data)
+										var res = JSON.parse(response.data);
+										if (res === true) {
+											this.$cookies.set('identity', 'staff');
+											window.location.href = "/wms/welcome";
+											
+										}
+									})
+									.catch(function(err) {
+										console.log(err)
+									});
+							} else if (identity === '游客') {
+								axios.post('/wms/borrower/login', this.$qs.stringify({
+										name: this.$data.ruleForm.name,
+									}))
+									.then(function(response) {
+										console.log(response.data)
+										var res = JSON.parse(response.data);
+										if (res === true) {
+											this.$cookies.set('identity', 'borrower');
+											window.location.href = "/wms/welcome";
+										}
+									})
+									.catch(function(err) {
+										console.log(err)
+									});
+							}
 						} else {
 							console.log('error submit!!');
 							return false;

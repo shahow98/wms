@@ -36,8 +36,10 @@ public class BorrowerAction {
 	@ResponseBody
 	public String register(Borrower user) {
 		boolean flag = false;
-		flag = borrowerService.register(user);
 		Gson gson = new Gson();
+		System.out.println(gson.toJson(user));
+		flag = borrowerService.register(user);
+		
 		return gson.toJson(flag);
 	}
 	@RequestMapping(value = "islogin", method = RequestMethod.GET)

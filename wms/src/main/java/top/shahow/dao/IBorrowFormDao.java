@@ -4,9 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import top.shahow.entity.BorrowFrom;
+import top.shahow.entity.BorrowForm;
 
 @Repository
-public interface IBorrowFormDao extends JpaRepository<BorrowFrom, Integer>, JpaSpecificationExecutor<BorrowFrom>{
+public interface IBorrowFormDao extends JpaRepository<BorrowForm, Integer>, JpaSpecificationExecutor<BorrowForm>{
 
 }

@@ -10,7 +10,7 @@ import top.shahow.dao.IDeliveryFormDao;
 import top.shahow.dao.IProductDao;
 import top.shahow.dao.IStockFormDao;
 import top.shahow.dao.IWareHouseDao;
-import top.shahow.entity.BorrowFrom;
+import top.shahow.entity.BorrowForm;
 import top.shahow.entity.DeliveryForm;
 import top.shahow.entity.Product;
 import top.shahow.entity.StockForm;
@@ -58,13 +58,7 @@ public class WareHouseService implements IWareHouseService{
 	}
 
 	@Override
-	public boolean borrow(BorrowFrom borrowFrom) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean giveBack(BorrowFrom borrowFrom) {
+	public boolean giveBack(BorrowForm borrowFrom) {
 		// TODO Auto-generated method stub
 		return false;
 	}

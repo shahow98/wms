@@ -2,7 +2,7 @@ package top.shahow.service;
 
 import java.util.List;
 
-import top.shahow.entity.BorrowFrom;
+import top.shahow.entity.BorrowForm;
 import top.shahow.entity.DeliveryForm;
 import top.shahow.entity.Product;
 import top.shahow.entity.StockForm;
@@ -17,9 +17,7 @@ public interface IWareHouseService {
 	public WareHouse delivery(DeliveryForm deliveryForm);
 	public List<DeliveryForm> getDeliveryForms();
 
-	// 借货
-	public boolean borrow(BorrowFrom borrowFrom);
 
 	// 还货
-	public boolean giveBack(BorrowFrom borrowFrom);
+	public boolean giveBack(BorrowForm borrowFrom);
 }

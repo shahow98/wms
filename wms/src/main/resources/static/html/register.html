@@ -8,18 +8,26 @@
 	<body>
 		<div id="app">
 			<el-row>
-				<el-col :span="12"  :offset="6">
+				<el-col :span="12" :offset="6">
 					<el-card class="box-card">
-						<el-form
-						 :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+						<el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
 							<el-form-item label="姓名" prop="name">
 								<el-input type="text" v-model="ruleForm.name" autocomplete="off"></el-input>
 							</el-form-item>
-							<el-form-item label="密码" prop="pass">
+							<el-form-item label="密码" prop="pass" v-if="needPass">
 								<el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
 							</el-form-item>
-							<el-form-item label="确认密码" prop="checkPass">
+							<el-form-item label="确认密码" prop="checkPass" v-if="needPass">
 								<el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+							</el-form-item>
+							<el-form-item label="手机号" prop="phone" v-if="needPhone">
+								<el-input type="text" v-model="ruleForm.phone" autocomplete="off"></el-input>
+							</el-form-item>
+							<el-form-item label="身份选择" prop="identity">
+								<el-radio-group v-model="ruleForm.identity">
+									<el-radio label="员工"></el-radio>
+									<el-radio label="游客"></el-radio>
+								</el-radio-group>
 							</el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
@@ -46,7 +54,7 @@
 				});
 			}
 		});
-		new Vue({
+		var app = new Vue({
 			el: '#app',
 			data: function() {
 				var checkName = (rule, value, callback) => {
@@ -76,11 +84,31 @@
 						callback();
 					}
 				};
+				var checkPhone = (rule, value, callback) => {
+					if (!value) {
+						return callback(new Error('手机号不能为空'));
+					}
+					setTimeout(() => {
+						callback();
+					}, 1000);
+				};
+				var alterForm = (rule, value, callback) => {
+					if (value === '员工') {
+						app.needPass = true;
+						app.needPhone = false;
+					} else if (value === '游客') {
+						app.needPass = false;
+						app.needPhone = true;
+					}
+					callback();
+				};
 				return {
 					ruleForm: {
 						name: '',
 						pass: '',
-						checkPass: ''
+						checkPass: '',
+						phone: '',
+						identity: '员工'
 					},
 					rules: {
 						name: [{
@@ -94,28 +122,58 @@
 						checkPass: [{
 							validator: validatePass2,
 							trigger: 'blur'
+						}],
+						phone: [{
+							validator: checkPhone,
+							trigger: 'blur'
+						}],
+						identity: [{
+							validator: alterForm,
+							trigger: 'change'
 						}]
-					}
+					},
+					needPass: true,
+					needPhone: false
 				};
 			},
 			methods: {
 				submitForm(formName) {
 					this.$refs[formName].validate((valid) => {
 						if (valid) {
-							axios.post('/wms/staff/register', this.$qs.stringify({
+							var identity = this.$data.ruleForm.identity;
+							if(identity === '员工'){
+								axios.post('/wms/staff/register', this.$qs.stringify({
 									name: this.$data.ruleForm.name,
 									password: this.$data.ruleForm.pass
 								}))
 								.then(function(response) {
 									console.log(response.data);
-									console.log(response.status);
-									console.log(response.statusText);
-									console.log(response.headers);
-									console.log(response.config);
+									var res = JSON.parse(response.data);
+									if(res === true){
+										window.location.href = "/wms/signin";
+									}
 								})
 								.catch(function(err) {
 									console.log(err)
 								});
+							}else if(identity === '游客'){
+								axios.post('/wms/borrower/register', this.$qs.stringify({
+									name: this.$data.ruleForm.name,
+									phone: this.$data.ruleForm.phone
+								}))
+								.then(function(response) {
+									console.log(response.data);
+									var res = JSON.parse(response.data);
+									if(res === true){
+										window.location.href = "/wms/signin";
+									}
+								})
+								.catch(function(err) {
+									console.log(err)
+								});
+							}
+							
+							
 						} else {
 							console.log('error submit!!');
 							return false;
