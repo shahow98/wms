@@ -41,7 +41,7 @@
 						<el-main>
 							<el-row>
 								<el-col :span="12" :offset="6">
-									<el-card  shadow="hover" v-if="showDeliveryForm">
+									<el-card shadow="hover" v-if="showDeliveryForm">
 										<el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
 											<el-form-item label="货物名" prop="productName">
 												<el-input type="text" v-model="ruleForm.productName" autocomplete="off"></el-input>
@@ -57,7 +57,7 @@
 									</el-card>
 								</el-col>
 								<el-col :span="20" :offset="2">
-									<el-card  shadow="hover" v-loading="tableLoading" v-if="showDeliveryTable">
+									<el-card shadow="hover" v-loading="tableLoading" v-if="showDeliveryTable">
 										<el-table :data="tableData" stripe style="width: 100%">
 											<el-table-column prop="deliveryDate" label="出货日期" width="180">
 											</el-table-column>
@@ -81,12 +81,20 @@
 	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
 	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
 	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
 	<script type="text/javascript">
 		Vue.use({
 			install(Vue) {
 				Object.defineProperty(Vue.prototype, "$qs", {
 					writable: false,
 					value: window.Qs
+				});
+			}
+		});
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$cookies", {
+					value: window.$cookies
 				});
 			}
 		});
@@ -114,6 +122,7 @@
 					isLogin: true,
 					showDeliveryForm: false,
 					showDeliveryTable: false,
+					identity: this.$cookies.get('identity'),
 					ruleForm: {
 						productName: '',
 						productNum: ''
@@ -171,7 +180,7 @@
 				signIn() {
 					window.location.href = "/wms/signin";
 				},
-				getDeliveryForms(){
+				getDeliveryForms() {
 					app.showDeliveryTable = true;
 					app.showDeliveryForm = false;
 					axios.get('/wms/warehouse/getDeliveryForms')
@@ -184,14 +193,15 @@
 							console.log(err)
 						});
 				},
-				getDeliveryForm(){
+				getDeliveryForm() {
 					app.showDeliveryTable = false;
 					app.showDeliveryForm = true;
 					app.tableLoading = true;
 				}
 			}
 		});
-		axios.get('/wms/staff/islogin')
+		var identity = app.identity;
+		axios.get('/wms/' + identity + '/islogin')
 			.then(function(response) {
 				var res = JSON.parse(response.data);
 				if (res != null) {

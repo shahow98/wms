@@ -15,7 +15,7 @@
 							<i class="el-icon-box">仓库管理系统 </i>
 						</el-col>
 						<el-col :span="4">
-							<el-menu mode="horizontal" @select="handleSelect" v-if="!isLogin">
+							<el-menu mode="horizontal" v-if="!isLogin">
 								<el-menu-item index="1" @click="signIn">登录</el-menu-item>
 								<el-menu-item index="2">
 									<el-button type="warning" plain>注册</el-button>
@@ -27,22 +27,75 @@
 				<el-container>
 					<el-aside width="200px">
 						<el-menu @open="handleOpen" @close="handleClose">
-							<el-menu-item index="1">
+							<el-menu-item index="1" @click="getBorrowTable">
 								<i class="el-icon-document"></i>
 								<span slot="title">借货记录</span>
 							</el-menu-item>
-							<el-menu-item index="2">
+							<el-menu-item index="2" @click="getBorrowForm">
 								<i class="el-icon-document"></i>
 								<span slot="title">借货登记</span>
 							</el-menu-item>
-							<el-menu-item index="2">
+							<el-menu-item index="3">
 								<i class="el-icon-document"></i>
 								<span slot="title">归还登记</span>
 							</el-menu-item>
 						</el-menu>
 					</el-aside>
 					<el-container>
-						<el-main>Main</el-main>
+						<el-main>
+							<el-row>
+								<el-col :span="12" :offset="6">
+									<el-card shadow="hover" v-if="showBorrowForm">
+										<el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+											<el-form-item label="货物名" prop="productName">
+												<el-input type="text" v-model="ruleForm.productName" autocomplete="off"></el-input>
+											</el-form-item>
+											<el-form-item label="货物数" prop="productNum">
+												<el-input type="number" v-model="ruleForm.productNum" autocomplete="off"></el-input>
+											</el-form-item>
+											<el-form-item label="借货时间" prop="borrowDate">
+												<el-date-picker v-model="ruleForm.borrowDate" type="datetime" placeholder="选择日期时间" style="width: 100%;">
+												</el-date-picker>
+											</el-form-item>
+											<el-form-item label="预期归还时间" prop="expectDate">
+												<el-date-picker v-model="ruleForm.expectDate" type="datetime" placeholder="选择日期时间" style="width: 100%;">
+												</el-date-picker>
+											</el-form-item>
+											<el-form-item>
+												<el-button type="primary" @click="submitForm('ruleForm')">发起申请</el-button>
+												<el-button @click="resetForm('ruleForm')">重置</el-button>
+											</el-form-item>
+										</el-form>
+									</el-card>
+								</el-col>
+								<el-col :span="20" :offset="2">
+									<el-card shadow="hover" v-loading="tableLoading" v-if="showBorrowTable">
+										<el-table :data="tableData" border>
+											<el-table-column prop="borrower.name" label="借货申请人" width="120">
+											</el-table-column>
+											<el-table-column prop="borrower.phone" label="联系方式" width="120">
+											</el-table-column>
+											<el-table-column prop="product.name" label="货物名" width="120">
+											</el-table-column>
+											<el-table-column prop="productNum" label="货物数" width="120">
+											</el-table-column>
+											<el-table-column prop="borrowDate" label="借货日期" width="200">
+											</el-table-column>
+											<el-table-column prop="expectDate" label="预计归还日期" width="200">
+											</el-table-column>
+											<el-table-column prop="repayDate" label="实际归还日期" width="200">
+											</el-table-column>
+											<el-table-column fixed="right" label="操作" width="100">
+												<template slot-scope="scope">
+													<el-button @click="handleClick(scope.row)" type="text" size="small">同意</el-button>
+													<el-button type="text" size="small">拒绝</el-button>
+												</template>
+											</el-table-column>
+										</el-table>
+									</el-card>
+								</el-col>
+							</el-row>
+						</el-main>
 					</el-container>
 				</el-container>
 			</el-container>
@@ -52,13 +105,109 @@
 	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
 	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
 	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
 	<script type="text/javascript">
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$qs", {
+					writable: false,
+					value: window.Qs
+				});
+			}
+		});
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$cookies", {
+					value: window.$cookies
+				});
+			}
+		});
 		var app = new Vue({
 			el: '#app',
 			data: function() {
+				var checkName = (rule, value, callback) => {
+					if (!value) {
+						return callback(new Error('货物名不能为空'));
+					}
+					setTimeout(() => {
+						callback();
+					}, 1000);
+				};
+				var checkNum = (rule, value, callback) => {
+					if (!value) {
+						return callback(new Error('货物数不能为空'));
+					}
+					setTimeout(() => {
+						callback();
+					}, 1000);
+				};
+				var checkDate1 = (rule, value, callback) => {
+					if (app.borrowDate === null) {
+						app.borrowDate = new Date();
+					}
+					if (value !== null) {
+						if (value.getTime() < app.borrowDate.getTime() - 1000) {
+							return callback(new Error('借货日期应大于当前日期'));
+						} else {
+							if (app.ruleForm.expectDate instanceof Date) {
+								if (app.ruleForm.expectDate.getTime() < value.getTime()) {
+									return callback(new Error('借货时间应小于预计归还日期'));
+								}
+							}
+							callback();
+						}
+					} else {
+						return callback(new Error('借货日期不能为空'));
+					}
+				};
+				var checkDate2 = (rule, value, callback) => {
+					if (value !== null) {
+						if (!(app.ruleForm.borrowDate instanceof Date)) {
+							callback();
+						} else {
+							if (value.getTime() < app.ruleForm.borrowDate.getTime()) {
+								return callback(new Error('预计归还日期应大于借货日期'));
+							} else {
+								callback();
+							}
+						}
+
+					} else {
+						return callback(new Error('借货日期不能为空'));
+					}
+				};
 				return {
-					value: true,
-					isLogin: true
+					identity: this.$cookies.get('identity'),
+					isLogin: true,
+					showBorrowForm: false,
+					showBorrowTable: false,
+					borrowDate: null,
+					ruleForm: {
+						productName: '',
+						productNum: '',
+						borrowDate: '',
+						expectDate: ''
+					},
+					rules: {
+						productName: [{
+							validator: checkName,
+							trigger: 'blur'
+						}],
+						productNum: [{
+							validator: checkNum,
+							trigger: 'blur'
+						}],
+						borrowDate: [{
+							validator: checkDate1,
+							trigger: 'blur'
+						}],
+						expectDate: [{
+							validator: checkDate2,
+							trigger: 'blur'
+						}]
+					},
+					tableData: [],
+					tableLoading: true
 				}
 			},
 			methods: {
@@ -68,12 +217,62 @@
 				handleClose(key, keyPath) {
 					console.log(key, keyPath);
 				},
+				submitForm(formName) {
+					this.$refs[formName].validate((valid) => {
+						if (valid) {
+							axios.post('/wms/borrower/submitBorrowForm', this.$qs.stringify({
+									productName: this.$data.ruleForm.productName,
+									productNum: this.$data.ruleForm.productNum,
+									borrowDate: formatDate(this.$data.ruleForm.borrowDate),
+									expectDate: formatDate(this.$data.ruleForm.expectDate)
+								}))
+								.then(function(response) {
+									console.log(response.data);
+									console.log(response.status);
+									console.log(response.statusText);
+									console.log(response.headers);
+									console.log(response.config);
+								})
+								.catch(function(err) {
+									console.log(err)
+								});
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				},
+				resetForm(formName) {
+					this.$refs[formName].resetFields();
+				},
+				handleClick(row) {
+					console.log(row);
+				},
 				signIn() {
 					window.location.href = "/wms/signin";
+				},
+				getBorrowForm() {
+					this.$data.showBorrowForm = true;
+					this.$data.showBorrowTable = false;
+					this.$data.tableLoading = true;
+				},
+				getBorrowTable() {
+					this.$data.showBorrowForm = false;
+					this.$data.showBorrowTable = true;
+					axios.get('/wms/staff/getBorrowForms')
+						.then(function(response) {
+							var res = JSON.parse(response.data);
+							app.tableData = res;
+							app.tableLoading = false;
+						})
+						.catch(function(err) {
+							console.log(err)
+						});
 				}
 			}
 		})
-		axios.get('/wms/staff/islogin')
+		var identity = app.identity;
+		axios.get('/wms/' + identity + '/islogin')
 			.then(function(response) {
 				var res = JSON.parse(response.data);
 				if (res != null) {
@@ -85,43 +284,33 @@
 			.catch(function(err) {
 				console.log(err)
 			});
+
+		function formatDate(date) {
+			var format = '';
+			if (date instanceof Date) {
+				format += date.getFullYear();
+				format += '-';
+				if (date.getMonth() + 1 < 10)
+					format += '0';
+				format += date.getMonth() + 1;
+				format += '-';
+				if (date.getDate() < 10)
+					format += '0';
+				format += date.getDate();
+				format += ' ';
+				if (date.getHours() < 10)
+					format += '0';
+				format += date.getHours();
+				format += ':';
+				if (date.getMinutes() < 10)
+					format += '0';
+				format += date.getMinutes();
+				format += ':';
+				if (date.getSeconds() < 10)
+					format += '0';
+				format += date.getSeconds();
+			}
+			return format;
+		}
 	</script>
-	<style>
-		.el-header,
-		.el-footer {
-			background-color: #B3C0D1;
-			color: #333;
-			text-align: left;
-			line-height: 60px;
-			font-size: 20px;
-			font-weight: bold;
-		}
-
-		.el-aside {
-			background-color: #D3DCE6;
-			color: #333;
-			text-align: center;
-			line-height: 200px;
-		}
-
-		.el-main {
-			background-color: #E9EEF3;
-			color: #333;
-			text-align: center;
-			line-height: 160px;
-		}
-
-		body>.el-container {
-			margin-bottom: 40px;
-		}
-
-		.el-container:nth-child(5) .el-aside,
-		.el-container:nth-child(6) .el-aside {
-			line-height: 260px;
-		}
-
-		.el-container:nth-child(7) .el-aside {
-			line-height: 320px;
-		}
-	</style>
 </html>

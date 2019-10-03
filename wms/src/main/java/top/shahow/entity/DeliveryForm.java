@@ -30,7 +30,6 @@ public class DeliveryForm {
 	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "staff_id")
 	private Staff staff;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "delivery_date")
 	private Date deliveryDate;
 	public int getId() {
@@ -63,6 +62,7 @@ public class DeliveryForm {
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
+	
 
 	
 }

@@ -1,5 +1,7 @@
 package top.shahow.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import top.shahow.entity.BorrowForm;
 import top.shahow.entity.Staff;
 import top.shahow.service.IStaffService;
 
@@ -50,5 +54,13 @@ public class StaffAction {
 		Gson gson = new Gson();
 		
 		return gson.toJson(staff);
+	}
+	
+	@RequestMapping(value = "getBorrowForms", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBorrowForms() {
+		List<BorrowForm> borrowForms = staffService.getBorrowForms();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		return gson.toJson(borrowForms);
 	}
 }

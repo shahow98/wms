@@ -29,7 +29,6 @@ public class StockForm {
 	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "staff_id")
 	private Staff staff;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "stock_date")
 	private Date stockDate;
 	public int getId() {

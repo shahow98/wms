@@ -25,4 +25,8 @@ public class NavAction {
 	public String delivery() {
 		return "forward:/html/delivery.html";
 	}
+	@RequestMapping(value = "borrow")
+	public String borrow() {
+		return "forward:/html/borrow.html";
+	}
 }

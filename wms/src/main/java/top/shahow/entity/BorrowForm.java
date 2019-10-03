@@ -34,13 +34,10 @@ public class BorrowForm {
 	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "borrower_id")
 	private Borrower borrower;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "delivery_date")
 	private Date borrowDate;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "expect_date")
 	private Date expectDate;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "repay_date")
 	private Date repayDate;
 	@Column(name = "status")

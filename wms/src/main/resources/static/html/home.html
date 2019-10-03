@@ -27,7 +27,7 @@
 				<el-main>
 					<el-row type="flex" justify="space-between" :gutter="20">
 						<el-col :span="8">
-							<el-card shadow="hover" >
+							<el-card shadow="hover">
 								<div @click="stock">
 									进货管理
 								</div>
@@ -42,7 +42,9 @@
 						</el-col>
 						<el-col :span="8">
 							<el-card shadow="hover">
-								借货管理
+								<div @click="borrow">
+									借货管理
+								</div>
 							</el-card>
 						</el-col>
 					</el-row>
@@ -54,22 +56,20 @@
 	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
 	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
 	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
-	 <script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
+	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
 	<script type="text/javascript">
 		Vue.use({
 			install(Vue) {
 				Object.defineProperty(Vue.prototype, "$cookies", {
-					value:  window.$cookies
+					value: window.$cookies
 				});
 			}
 		});
 		var app = new Vue({
 			el: '#app',
 			data: function() {
-				
-				console.log('-----'+this.$cookies.get('identity'));
 				return {
-					value: true,
+					identity: this.$cookies.get('identity'),
 					isLogin: true
 				}
 			},
@@ -80,18 +80,22 @@
 				signIn() {
 					window.location.href = "/wms/signin";
 				},
-				signUp(){
+				signUp() {
 					window.location.href = "/wms/signup";
 				},
-				stock(){
+				stock() {
 					window.location.href = "/wms/stock";
 				},
-				delivery(){
+				delivery() {
 					window.location.href = '/wms/delivery';
+				},
+				borrow() {
+					window.location.href = '/wms/borrow';
 				}
 			}
-		})
-		axios.get('/wms/staff/islogin')
+		});
+		var identity = app.identity;
+		axios.get('/wms/' + identity + '/islogin')
 			.then(function(response) {
 				var res = JSON.parse(response.data);
 				if (res != null) {
