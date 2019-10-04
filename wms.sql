@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : kzh
-Source Server Version : 50520
+Source Server Version : 50726
 Source Host           : localhost:3306
 Source Database       : wms
 
 Target Server Type    : MYSQL
-Target Server Version : 50520
+Target Server Version : 50726
 File Encoding         : 65001
 
-Date: 2019-09-27 17:07:23
+Date: 2019-10-04 23:34:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,13 +26,13 @@ CREATE TABLE `hibernate_sequence` (
 -- ----------------------------
 -- Records of hibernate_sequence
 -- ----------------------------
-INSERT INTO `hibernate_sequence` VALUES ('1');
-INSERT INTO `hibernate_sequence` VALUES ('1');
-INSERT INTO `hibernate_sequence` VALUES ('1');
-INSERT INTO `hibernate_sequence` VALUES ('1');
-INSERT INTO `hibernate_sequence` VALUES ('1');
-INSERT INTO `hibernate_sequence` VALUES ('1');
-INSERT INTO `hibernate_sequence` VALUES ('1');
+INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('21');
 
 -- ----------------------------
 -- Table structure for t_borrower
@@ -48,6 +48,7 @@ CREATE TABLE `t_borrower` (
 -- ----------------------------
 -- Records of t_borrower
 -- ----------------------------
+INSERT INTO `t_borrower` VALUES ('18', 'k', '123456');
 
 -- ----------------------------
 -- Table structure for t_borrowform
@@ -59,21 +60,24 @@ CREATE TABLE `t_borrowform` (
   `expect_date` datetime DEFAULT NULL,
   `product_num` int(11) DEFAULT NULL,
   `repay_date` datetime DEFAULT NULL,
-  `borrower` int(11) DEFAULT NULL,
   `product_id` int(11) DEFAULT NULL,
   `staff_id` int(11) DEFAULT NULL,
+  `borrower_id` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKctbhgrlbmro6qw50y7l9ch7e7` (`borrower`),
   KEY `FKbklxxoynarecfhtnq6mhbradx` (`product_id`),
   KEY `FKlsmdehnw0hjn1f0x0ssg4i53c` (`staff_id`),
+  KEY `FKp8ui9hghd6vnkycpx59hiusxo` (`borrower_id`),
   CONSTRAINT `FKbklxxoynarecfhtnq6mhbradx` FOREIGN KEY (`product_id`) REFERENCES `t_product` (`id`),
-  CONSTRAINT `FKctbhgrlbmro6qw50y7l9ch7e7` FOREIGN KEY (`borrower`) REFERENCES `t_borrower` (`id`),
-  CONSTRAINT `FKlsmdehnw0hjn1f0x0ssg4i53c` FOREIGN KEY (`staff_id`) REFERENCES `t_user` (`id`)
+  CONSTRAINT `FKlsmdehnw0hjn1f0x0ssg4i53c` FOREIGN KEY (`staff_id`) REFERENCES `t_user` (`id`),
+  CONSTRAINT `FKp8ui9hghd6vnkycpx59hiusxo` FOREIGN KEY (`borrower_id`) REFERENCES `t_borrower` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of t_borrowform
 -- ----------------------------
+INSERT INTO `t_borrowform` VALUES ('19', '2019-10-03 12:34:59', '2019-10-09 16:00:00', '1', '2019-10-04 14:44:27', '6', '1', '18', '3');
+INSERT INTO `t_borrowform` VALUES ('20', '2019-10-04 15:30:22', '2019-10-04 15:30:25', '1', null, '6', '1', '18', '1');
 
 -- ----------------------------
 -- Table structure for t_deliveryform
@@ -95,6 +99,7 @@ CREATE TABLE `t_deliveryform` (
 -- ----------------------------
 -- Records of t_deliveryform
 -- ----------------------------
+INSERT INTO `t_deliveryform` VALUES ('13', '2019-10-01 14:10:43', '1', '6', '1');
 
 -- ----------------------------
 -- Table structure for t_product
@@ -110,6 +115,9 @@ CREATE TABLE `t_product` (
 -- ----------------------------
 -- Records of t_product
 -- ----------------------------
+INSERT INTO `t_product` VALUES ('6', null, '苹果');
+INSERT INTO `t_product` VALUES ('11', null, 'asd');
+INSERT INTO `t_product` VALUES ('15', null, '菠萝');
 
 -- ----------------------------
 -- Table structure for t_stockfrom
@@ -131,6 +139,9 @@ CREATE TABLE `t_stockfrom` (
 -- ----------------------------
 -- Records of t_stockfrom
 -- ----------------------------
+INSERT INTO `t_stockfrom` VALUES ('9', '6', '2019-10-01 02:49:08', '6', '1');
+INSERT INTO `t_stockfrom` VALUES ('14', '12', '2019-10-01 14:13:29', '6', '1');
+INSERT INTO `t_stockfrom` VALUES ('16', '12', '2019-10-01 14:14:01', '15', '1');
 
 -- ----------------------------
 -- Table structure for t_user
@@ -146,6 +157,8 @@ CREATE TABLE `t_user` (
 -- ----------------------------
 -- Records of t_user
 -- ----------------------------
+INSERT INTO `t_user` VALUES ('1', 'kint', 'yyy');
+INSERT INTO `t_user` VALUES ('5', '科学', '123');
 
 -- ----------------------------
 -- Table structure for t_warehouse
@@ -163,3 +176,5 @@ CREATE TABLE `t_warehouse` (
 -- ----------------------------
 -- Records of t_warehouse
 -- ----------------------------
+INSERT INTO `t_warehouse` VALUES ('10', '17', '6');
+INSERT INTO `t_warehouse` VALUES ('17', '12', '15');
