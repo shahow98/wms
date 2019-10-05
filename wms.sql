@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50726
 File Encoding         : 65001
 
-Date: 2019-10-04 23:34:43
+Date: 2019-10-05 23:01:45
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,13 +26,13 @@ CREATE TABLE `hibernate_sequence` (
 -- ----------------------------
 -- Records of hibernate_sequence
 -- ----------------------------
-INSERT INTO `hibernate_sequence` VALUES ('21');
-INSERT INTO `hibernate_sequence` VALUES ('21');
-INSERT INTO `hibernate_sequence` VALUES ('21');
-INSERT INTO `hibernate_sequence` VALUES ('21');
-INSERT INTO `hibernate_sequence` VALUES ('21');
-INSERT INTO `hibernate_sequence` VALUES ('21');
-INSERT INTO `hibernate_sequence` VALUES ('21');
+INSERT INTO `hibernate_sequence` VALUES ('26');
+INSERT INTO `hibernate_sequence` VALUES ('26');
+INSERT INTO `hibernate_sequence` VALUES ('26');
+INSERT INTO `hibernate_sequence` VALUES ('26');
+INSERT INTO `hibernate_sequence` VALUES ('26');
+INSERT INTO `hibernate_sequence` VALUES ('26');
+INSERT INTO `hibernate_sequence` VALUES ('26');
 
 -- ----------------------------
 -- Table structure for t_borrower
@@ -49,6 +49,7 @@ CREATE TABLE `t_borrower` (
 -- Records of t_borrower
 -- ----------------------------
 INSERT INTO `t_borrower` VALUES ('18', 'k', '123456');
+INSERT INTO `t_borrower` VALUES ('25', 'h', '12314124');
 
 -- ----------------------------
 -- Table structure for t_borrowform
@@ -77,7 +78,7 @@ CREATE TABLE `t_borrowform` (
 -- Records of t_borrowform
 -- ----------------------------
 INSERT INTO `t_borrowform` VALUES ('19', '2019-10-03 12:34:59', '2019-10-09 16:00:00', '1', '2019-10-04 14:44:27', '6', '1', '18', '3');
-INSERT INTO `t_borrowform` VALUES ('20', '2019-10-04 15:30:22', '2019-10-04 15:30:25', '1', null, '6', '1', '18', '1');
+INSERT INTO `t_borrowform` VALUES ('20', '2019-10-04 15:30:22', '2019-10-04 15:30:25', '1', null, '6', '1', '18', '4');
 
 -- ----------------------------
 -- Table structure for t_deliveryform
@@ -118,6 +119,7 @@ CREATE TABLE `t_product` (
 INSERT INTO `t_product` VALUES ('6', null, '苹果');
 INSERT INTO `t_product` VALUES ('11', null, 'asd');
 INSERT INTO `t_product` VALUES ('15', null, '菠萝');
+INSERT INTO `t_product` VALUES ('22', null, '火龙果');
 
 -- ----------------------------
 -- Table structure for t_stockfrom
@@ -159,6 +161,7 @@ CREATE TABLE `t_user` (
 -- ----------------------------
 INSERT INTO `t_user` VALUES ('1', 'kint', 'yyy');
 INSERT INTO `t_user` VALUES ('5', '科学', '123');
+INSERT INTO `t_user` VALUES ('24', 'root', '123456');
 
 -- ----------------------------
 -- Table structure for t_warehouse
@@ -178,3 +181,4 @@ CREATE TABLE `t_warehouse` (
 -- ----------------------------
 INSERT INTO `t_warehouse` VALUES ('10', '17', '6');
 INSERT INTO `t_warehouse` VALUES ('17', '12', '15');
+INSERT INTO `t_warehouse` VALUES ('23', '0', '22');
