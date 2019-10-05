@@ -2,9 +2,13 @@ package top.shahow.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import top.shahow.entity.Borrower;
+import top.shahow.entity.Staff;
 
 @Component("loginInterceptor")
 public class LoginInterceptor extends HandlerInterceptorAdapter{
@@ -25,13 +29,19 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
         	//不需要的拦截直接过
             return true;
         } else {
-        	// 这写你拦截需要干的事儿，比如取缓存，SESSION，权限判断等
-            System.out.println("====================================");
-            return true;
+        	boolean flag = true;
+            HttpSession session = request.getSession();
+            Borrower borrower = (Borrower) session.getAttribute("borrower_login");
+            Staff staff = (Staff) session.getAttribute("staff_login");
+            if(borrower == null && staff == null ) {
+            	flag = false;
+            	request.getRequestDispatcher("/signin").forward(request, response);
+            }
+            return flag;
         }
     }
     
     private class Const{
-    	public static final String NO_INTERCEPTOR_PATH =".*/((.css)|(.js)|(images)|(signin)|(singup)).*";
+    	public static final String NO_INTERCEPTOR_PATH =".*/((.css)|(.js)|(images)|(signin)|(login)|(signup)|(register)).*";
     }
 }

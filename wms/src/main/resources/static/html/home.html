@@ -3,50 +3,72 @@
 	<head>
 		<base href="/wms/html/" />
 		<meta charset="utf-8">
-		<title>home</title>
+		<title>首页</title>
 		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 	</head>
 	<body>
 		<div id="app">
 			<el-container>
-				<el-header>
+				<el-header class="wms-header">
 					<el-row type="flex" justify="space-between">
 						<el-col :span="6">
-							<i class="el-icon-box">仓库管理系统 </i>
+							<el-link class="wms-logo" icon="el-icon-box" href="/wms/welcome">仓库管理系统</el-link>
 						</el-col>
-						<el-col :span="4">
-							<el-menu mode="horizontal" @select="handleSelect" v-if="!isLogin">
+						<el-col :span="4" v-if="!isLogin">
+							<el-menu mode="horizontal">
 								<el-menu-item index="1" @click="signIn">登录</el-menu-item>
 								<el-menu-item index="2">
 									<el-button type="warning" plain @click="signUp">注册</el-button>
 								</el-menu-item>
 							</el-menu>
 						</el-col>
+						<el-col :span="3" v-if="isLogin">
+							<el-menu mode="horizontal" class="wms-emnu">
+								<el-submenu index="1">
+									<template slot="title">
+										<i class="el-icon-user-solid"></i>
+										用户中心
+									</template>
+									<el-menu-item index="1-1" @click="logout">退出登录</el-menu-item>
+								</el-submenu>
+							</el-menu>
+						</el-col>
 					</el-row>
 				</el-header>
 				<el-main>
-					<el-row type="flex" justify="space-between" :gutter="20">
-						<el-col :span="8">
-							<el-card shadow="hover">
-								<div @click="stock">
-									进货管理
-								</div>
-							</el-card>
-						</el-col>
-						<el-col :span="8">
-							<el-card shadow="hover">
-								<div @click="delivery">
-									出货管理
-								</div>
-							</el-card>
-						</el-col>
-						<el-col :span="8">
-							<el-card shadow="hover">
-								<div @click="borrow">
-									借货管理
-								</div>
-							</el-card>
-						</el-col>
+					<el-row :gutter="20">
+						<transition appear appear-class="custom-appear-class" appear-to-class="custom-appear-to-class"
+						 appear-active-class="custom-appear-active-class">
+							<el-col :span="6" v-if="identity == 'staff'">
+								<el-card class="wms-option-card" shadow="hover">
+									<el-link class="wms-nav" href="/wms/stock">进货管理</el-link>
+								</el-card>
+							</el-col>
+						</transition>
+						<transition appear appear-class="custom-appear-class" appear-to-class="custom-appear-to-class"
+						 appear-active-class="custom-appear-active-class">
+							<el-col :span="6" v-if="identity == 'staff'">
+								<el-card class="wms-option-card" shadow="hover">
+									<el-link class="wms-nav" href="/wms/delivery">出货管理</el-link>
+								</el-card>
+							</el-col>
+						</transition>
+						<transition appear appear-class="custom-appear-class" appear-to-class="custom-appear-to-class"
+						 appear-active-class="custom-appear-active-class">
+							<el-col :span="6" v-if="identity == 'staff' || identity == 'borrower'">
+								<el-card class="wms-option-card" shadow="hover">
+									<el-link class="wms-nav" href="/wms/borrow">借货管理</el-link>
+								</el-card>
+							</el-col>
+						</transition>
+						<transition appear appear-class="custom-appear-class" appear-to-class="custom-appear-to-class"
+						 appear-active-class="custom-appear-active-class">
+							<el-col :span="6" v-if="identity == 'staff'">
+								<el-card class="wms-option-card" shadow="hover">
+									<el-link class="wms-nav" href="/wms/warehouse">仓库管理</el-link>
+								</el-card>
+							</el-col>
+						</transition>
 					</el-row>
 				</el-main>
 			</el-container>
@@ -74,76 +96,62 @@
 				}
 			},
 			methods: {
-				handleSelect(key, keyPath) {
-					console.log(key, keyPath);
-				},
 				signIn() {
 					window.location.href = "/wms/signin";
 				},
 				signUp() {
 					window.location.href = "/wms/signup";
 				},
-				stock() {
-					window.location.href = "/wms/stock";
-				},
-				delivery() {
-					window.location.href = '/wms/delivery';
-				},
-				borrow() {
-					window.location.href = '/wms/borrow';
+				logout() {
+					this.$cookies.set('identity', null);
+					window.location.href = '/wms/logout';
 				}
 			}
 		});
 		var identity = app.identity;
-		axios.get('/wms/' + identity + '/islogin')
-			.then(function(response) {
-				var res = JSON.parse(response.data);
-				if (res != null) {
-					app.isLogin = true;
-				} else {
-					app.isLogin = false;
-				}
-			})
-			.catch(function(err) {
-				console.log(err)
-			});
+		if (identity != 'null') {
+			axios.get('/wms/' + identity + '/islogin')
+				.then(function(response) {
+					var res = JSON.parse(response.data);
+					app.isLogin = res;
+				})
+				.catch(function(err) {
+					console.log(err)
+				});
+		}else{
+			app.isLogin = false;
+		}
 	</script>
 	<style>
-		.el-header,
-		.el-footer {
-			background-color: #B3C0D1;
-			color: #333;
-			text-align: left;
+		.custom-appear-class {
+			opacity: 0
+		}
+
+		.custom-appear-active-class {
+			transition: opacity 2s;
+		}
+
+		.custom-appear-to-class {
+			opacity: 1
+		}
+		
+		
+		.wms-header{
+			border-bottom: 1px #e6e6e6 solid;
+		}
+		.wms-logo{
+			font-size: 30px;
 			line-height: 60px;
-			font-size: 20px;
-			font-weight: bold;
 		}
-
-		.el-aside {
-			background-color: #D3DCE6;
-			color: #333;
+		.wms-nav{
+			display: block;
+			font-size: 1.25rem;
+			line-height: 3.125rem;
+			height: 3.125rem;
+		}
+		.wms-option-card{
 			text-align: center;
-			line-height: 200px;
-		}
-
-		.el-main {
-			background-color: #E9EEF3;
-			color: #333;
-			text-align: center;
-			line-height: 160px;
-		}
-
-		body>.el-container {
-			margin-bottom: 40px;
-		}
-
-		.el-container:nth-child(5) .el-aside,
-		.el-container:nth-child(6) .el-aside {
-			line-height: 260px;
-		}
-
-		.el-container:nth-child(7) .el-aside {
-			line-height: 320px;
+			margin-bottom: 10px;
 		}
 	</style>
 </html>

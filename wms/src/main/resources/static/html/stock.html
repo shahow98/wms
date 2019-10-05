@@ -9,17 +9,28 @@
 	<body>
 		<div id="app">
 			<el-container>
-				<el-header>
+				<el-header class="wms-header">
 					<el-row type="flex" justify="space-between">
 						<el-col :span="6">
-							<i class="el-icon-box">仓库管理系统 </i>
+							<el-link class="wms-logo" icon="el-icon-box" href="/wms/welcome">仓库管理系统</el-link>
 						</el-col>
-						<el-col :span="4">
-							<el-menu mode="horizontal" @select="handleSelect" v-if="!isLogin">
+						<el-col :span="4" v-if="!isLogin">
+							<el-menu mode="horizontal">
 								<el-menu-item index="1" @click="signIn">登录</el-menu-item>
 								<el-menu-item index="2">
-									<el-button type="warning" plain>注册</el-button>
+									<el-button type="warning" plain @click="signUp">注册</el-button>
 								</el-menu-item>
+							</el-menu>
+						</el-col>
+						<el-col :span="3" v-if="isLogin">
+							<el-menu mode="horizontal">
+								<el-submenu index="1">
+								    <template slot="title">
+										<i class="el-icon-user-solid"></i>
+										用户中心
+									</template>
+								    <el-menu-item index="1-1" @click="logout">退出登录</el-menu-item>
+								  </el-submenu>
 							</el-menu>
 						</el-col>
 					</el-row>
@@ -160,10 +171,6 @@
 								}))
 								.then(function(response) {
 									console.log(response.data);
-									console.log(response.status);
-									console.log(response.statusText);
-									console.log(response.headers);
-									console.log(response.config);
 								})
 								.catch(function(err) {
 									console.log(err)
@@ -179,6 +186,13 @@
 				},
 				signIn() {
 					window.location.href = "/wms/signin";
+				},
+				signUp() {
+					window.location.href = "/wms/signup";
+				},
+				logout(){
+					this.$cookies.set('identity', null);
+					window.location.href = '/wms/logout';
 				},
 				getStockForms(){
 					app.showStockTable = true;
@@ -201,18 +215,26 @@
 			}
 		});
 		var identity = app.identity;
-		axios.get('/wms/' + identity + '/islogin')
-			.then(function(response) {
-				var res = JSON.parse(response.data);
-				if (res != null) {
-					app.isLogin = true;
-				} else {
-					app.isLogin = false;
-				}
-			})
-			.catch(function(err) {
-				console.log(err)
-			});
+		if (identity != 'null') {
+			axios.get('/wms/' + identity + '/islogin')
+				.then(function(response) {
+					var res = JSON.parse(response.data);
+					app.isLogin = res;
+				})
+				.catch(function(err) {
+					console.log(err)
+				});
+		}else{
+			app.isLogin = false;
+		}
 	</script>
-
+	<style>
+		.wms-header{
+			border-bottom: 1px #e6e6e6 solid;
+		}
+		.wms-logo{
+			font-size: 30px;
+			line-height: 60px;
+		}
+	</style>
 </html>

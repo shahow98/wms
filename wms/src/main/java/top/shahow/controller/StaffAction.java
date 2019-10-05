@@ -56,10 +56,13 @@ public class StaffAction {
 	@RequestMapping(value = "islogin", method = RequestMethod.GET)
 	@ResponseBody
 	public String isLogin(HttpSession session) {
+		boolean flag = false;
 		Staff staff = (Staff) session.getAttribute("staff_login");
+		if(staff != null) {
+			flag = true;
+		}
 		Gson gson = new Gson();
-		
-		return gson.toJson(staff);
+		return gson.toJson(flag);
 	}
 	
 	@RequestMapping(value = "getBorrowForms", method = RequestMethod.GET)

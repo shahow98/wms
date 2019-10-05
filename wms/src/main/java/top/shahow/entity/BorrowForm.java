@@ -103,5 +103,6 @@ public class BorrowForm {
 		public static final int APPLY_CONSENT = 1;
 		public static final int APPLY_REFUSE = 2;
 		public static final int APPLY_GIVEBACK = 3;
+		public static final int APPLY_ERROR = 4;
 	}
 }

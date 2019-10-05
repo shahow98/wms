@@ -75,6 +75,13 @@ public class WareHouseService implements IWareHouseService{
 		return deliveryFormDao.findAll();
 	}
 
+	@Override
+	public List<WareHouse> getWareHouseAll() {
+		// TODO Auto-generated method stub
+		
+		return wareHouseDao.findAll();
+	}
+
 
 
 }

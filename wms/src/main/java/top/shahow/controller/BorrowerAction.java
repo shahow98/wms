@@ -42,7 +42,6 @@ public class BorrowerAction {
 	public String register(Borrower user) {
 		boolean flag = false;
 		Gson gson = new Gson();
-		System.out.println(gson.toJson(user));
 		flag = borrowerService.register(user);
 
 		return gson.toJson(flag);
@@ -51,9 +50,13 @@ public class BorrowerAction {
 	@RequestMapping(value = "islogin", method = RequestMethod.GET)
 	@ResponseBody
 	public String isLogin(HttpSession session) {
+		boolean flag = false;
 		Borrower borrower = (Borrower) session.getAttribute("borrower_login");
+		if(borrower != null) {
+			flag = true;
+		}
 		Gson gson = new Gson();
-		return gson.toJson(borrower);
+		return gson.toJson(flag);
 
 	}
 

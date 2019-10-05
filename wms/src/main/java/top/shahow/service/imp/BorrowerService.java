@@ -49,6 +49,9 @@ public class BorrowerService implements IBorrowerService{
 			borrowForm.setStatus(StatusType.APPLY_UNDERWAY);
 			borrowFormDao.save(borrowForm);
 			flag = true;
+		}else {
+			borrowForm.setStatus(StatusType.APPLY_ERROR);
+			borrowFormDao.save(borrowForm);
 		}
 		return flag;
 	}

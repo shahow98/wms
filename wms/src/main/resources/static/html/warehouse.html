@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<base href="/wms/html/" />
+		<meta charset="utf-8">
+		<title>仓库管理</title>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	</head>
+	<body>
+		<div id="app">
+			<el-container>
+				<el-header  class="wms-header">
+					<el-row type="flex" justify="space-between">
+						<el-col :span="6">
+							<el-link  class="wms-logo" icon="el-icon-box" href="/wms/welcome">仓库管理系统</el-link>
+						</el-col>
+						<el-col :span="4" v-if="!isLogin">
+							<el-menu mode="horizontal">
+								<el-menu-item index="1" @click="signIn">登录</el-menu-item>
+								<el-menu-item index="2">
+									<el-button type="warning" plain @click="signUp">注册</el-button>
+								</el-menu-item>
+							</el-menu>
+						</el-col>
+						<el-col :span="3" v-if="isLogin">
+							<el-menu mode="horizontal">
+								<el-submenu index="1">
+									<template slot="title">
+										<i class="el-icon-user-solid"></i>
+										用户中心
+									</template>
+									<el-menu-item index="1-1" @click="logout">退出登录</el-menu-item>
+								</el-submenu>
+							</el-menu>
+						</el-col>
+					</el-row>
+				</el-header>
+				<el-main v-loading="productsLoading">
+					<el-row :gutter="20">
+						<transition-group name="list" tag="p">
+							<el-col :span="3" v-for="(product, index) in products" :key="index">
+								<el-tooltip effect="dark" :content="'库存:'+product.productNum" placement="bottom">
+									<el-card shadow="hover" class="wms-option-card">
+										{{product.product.name}}
+									</el-card>
+								</el-tooltip>
+							</el-col>
+						</transition-group>
+					</el-row>
+				</el-main>
+			</el-container>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+	<script src="https://cdn.bootcss.com/qs/6.8.0/qs.js"></script>
+	<script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
+	<script type="text/javascript">
+		Vue.use({
+			install(Vue) {
+				Object.defineProperty(Vue.prototype, "$cookies", {
+					value: window.$cookies
+				});
+			}
+		});
+		var app = new Vue({
+			el: '#app',
+			data: function() {
+				axios.get('/wms/warehouse/getWareHouseAll')
+					.then(function(response) {
+						var res = JSON.parse(response.data);
+						app.products = res;
+						app.productsLoading = false;
+					})
+					.catch(function(err) {
+						console.log(err)
+					});
+				return {
+					identity: this.$cookies.get('identity'),
+					isLogin: true,
+					products: [],
+					productsLoading: true
+				}
+			},
+			methods: {
+				handleSelect(key, keyPath) {
+					console.log(key, keyPath);
+				},
+				signIn() {
+					window.location.href = "/wms/signin";
+				},
+				signUp() {
+					window.location.href = "/wms/signup";
+				},
+				stock() {
+					window.location.href = "/wms/stock";
+				},
+				delivery() {
+					window.location.href = '/wms/delivery';
+				},
+				borrow() {
+					window.location.href = '/wms/borrow';
+				},
+				logout() {
+					this.$cookies.set('identity', null);
+					window.location.href = '/wms/logout';
+				}
+			}
+		});
+		var identity = app.identity;
+		if (identity != 'null') {
+			axios.get('/wms/' + identity + '/islogin')
+				.then(function(response) {
+					var res = JSON.parse(response.data);
+					app.isLogin = res;
+				})
+				.catch(function(err) {
+					console.log(err)
+				});
+		}else{
+			app.isLogin = false;
+		}
+	</script>
+	<style>
+		.list-item {
+			display: inline-block;
+			margin-right: 10px;
+		}
+
+		.list-enter-active,
+		.list-leave-active {
+			transition: all 1s;
+		}
+
+		.list-enter,
+		.list-leave-to
+
+		/* .list-leave-active for below version 2.1.8 */
+			{
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		
+		.wms-header{
+			border-bottom: 1px #e6e6e6 solid;
+		}
+		.wms-logo{
+			font-size: 30px;
+			line-height: 60px;
+		}
+		.wms-option-card{
+			text-align: center;
+			margin-bottom: 10px;
+		}
+	</style>
+</html>

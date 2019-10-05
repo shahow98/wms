@@ -20,4 +20,7 @@ public interface IWareHouseService {
 
 	// 还货
 	public boolean giveBack(BorrowForm borrowFrom);
+	
+	//库存
+	public List<WareHouse> getWareHouseAll();
 }

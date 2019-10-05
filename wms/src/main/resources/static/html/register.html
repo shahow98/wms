@@ -141,39 +141,77 @@
 					this.$refs[formName].validate((valid) => {
 						if (valid) {
 							var identity = this.$data.ruleForm.identity;
-							if(identity === '员工'){
+							if (identity === '员工') {
 								axios.post('/wms/staff/register', this.$qs.stringify({
-									name: this.$data.ruleForm.name,
-									password: this.$data.ruleForm.pass
-								}))
-								.then(function(response) {
-									console.log(response.data);
-									var res = JSON.parse(response.data);
-									if(res === true){
-										window.location.href = "/wms/signin";
-									}
-								})
-								.catch(function(err) {
-									console.log(err)
-								});
-							}else if(identity === '游客'){
+										name: this.$data.ruleForm.name,
+										password: this.$data.ruleForm.pass
+									}))
+									.then(function(response) {
+										var res = JSON.parse(response.data);
+										if (res === true) {
+											app.$notify({
+												title: '成功',
+												message: '员工账号注册成功',
+												type: 'success',
+												position: 'bottom-right'
+											});
+											setTimeout(function() {
+												window.location.href = "/wms/signin";
+											}, 1000);
+										} else {
+											app.$notify({
+												title: '错误',
+												message: '注册失败',
+												type: 'error',
+												position: 'bottom-right'
+											});
+										}
+									})
+									.catch(function(err) {
+										app.$notify({
+											title: '警告',
+											message: '网络连接异常',
+											type: 'warning',
+											position: 'bottom-right'
+										});
+									});
+							} else if (identity === '游客') {
 								axios.post('/wms/borrower/register', this.$qs.stringify({
-									name: this.$data.ruleForm.name,
-									phone: this.$data.ruleForm.phone
-								}))
-								.then(function(response) {
-									console.log(response.data);
-									var res = JSON.parse(response.data);
-									if(res === true){
-										window.location.href = "/wms/signin";
-									}
-								})
-								.catch(function(err) {
-									console.log(err)
-								});
+										name: this.$data.ruleForm.name,
+										phone: this.$data.ruleForm.phone
+									}))
+									.then(function(response) {
+										var res = JSON.parse(response.data);
+										if (res === true) {
+											app.$notify({
+												title: '成功',
+												message: '游客账号注册成功',
+												type: 'success',
+												position: 'bottom-right'
+											});
+											setTimeout(function() {
+												window.location.href = "/wms/signin";
+											}, 1000);
+										} else {
+											app.$notify({
+												title: '错误',
+												message: '注册失败',
+												type: 'error',
+												position: 'bottom-right'
+											});
+										}
+									})
+									.catch(function(err) {
+										app.$notify({
+											title: '警告',
+											message: '网络连接异常',
+											type: 'warning',
+											position: 'bottom-right'
+										});
+									});
 							}
-							
-							
+
+
 						} else {
 							console.log('error submit!!');
 							return false;

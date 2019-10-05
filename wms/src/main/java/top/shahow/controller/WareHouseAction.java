@@ -79,4 +79,12 @@ public class WareHouseAction {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		return gson.toJson(deliveryForms);
 	}
+	
+	@RequestMapping(value = "getWareHouseAll", method = RequestMethod.GET)
+	@ResponseBody
+	public String getWareHouseAll() {
+		List<WareHouse> deliveryForms = wareHouseService.getWareHouseAll();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		return gson.toJson(deliveryForms);
+	}
 }
