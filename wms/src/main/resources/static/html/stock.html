@@ -37,7 +37,7 @@
 				</el-header>
 				<el-container>
 					<el-aside width="200px">
-						<el-menu @open="handleOpen" @close="handleClose">
+						<el-menu>
 							<el-menu-item index="1" @click="getStockForms">
 								<i class="el-icon-document"></i>
 								<span slot="title">进货记录</span>
@@ -153,15 +153,6 @@
 				};
 			},
 			methods: {
-				handleSelect(key, keyPath) {
-					console.log(key, keyPath);
-				},
-				handleOpen(key, keyPath) {
-					console.log(key, keyPath);
-				},
-				handleClose(key, keyPath) {
-					console.log(key, keyPath);
-				},
 				submitForm(formName) {
 					this.$refs[formName].validate((valid) => {
 						if (valid) {
@@ -170,13 +161,40 @@
 									productNum: this.$data.ruleForm.productNum
 								}))
 								.then(function(response) {
-									console.log(response.data);
+									var res = JSON.parse(response.data);
+									if(res !== null){
+										app.$refs[formName].resetFields();
+										app.$notify({
+											title: '成功',
+											message: '进货登记成功',
+											type: 'success',
+											position: 'bottom-right'
+										});
+									}else{
+										app.$refs[formName].resetFields();
+										app.$notify({
+											title: '错误',
+											message: '进货登记失败',
+											type: 'error',
+											position: 'bottom-right'
+										});
+									}
 								})
 								.catch(function(err) {
-									console.log(err)
+									app.$notify({
+										title: '警告',
+										message: '网络连接异常',
+										type: 'warning',
+										position: 'bottom-right'
+									});
 								});
 						} else {
-							console.log('error submit!!');
+							app.$notify({
+								title: '错误',
+								message: '进货登记单信息填写错误',
+								type: 'error',
+								position: 'bottom-right'
+							});
 							return false;
 						}
 					});

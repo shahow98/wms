@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import top.shahow.dao.IBorrowFormDao;
 import top.shahow.dao.IDeliveryFormDao;
-import top.shahow.dao.IProductDao;
 import top.shahow.dao.IStockFormDao;
 import top.shahow.dao.IWareHouseDao;
 import top.shahow.entity.BorrowForm;
@@ -25,8 +23,6 @@ public class WareHouseService implements IWareHouseService{
 	private IStockFormDao stockFormDao;
 	@Autowired
 	private IDeliveryFormDao deliveryFormDao;
-	@Autowired
-	private IBorrowFormDao borrowerDao;
 	
 	@Override
 	public WareHouse stock(StockForm stockForm) {
@@ -52,6 +48,8 @@ public class WareHouseService implements IWareHouseService{
 				wareHouse.setProductNum(wareHouse.getProductNum() - deliveryForm.getProductNum());
 				wareHouse = wareHouseDao.save(wareHouse);
 				deliveryFormDao.save(deliveryForm);
+			}else {
+				wareHouse = null;
 			}
 		}
 		return wareHouse;
