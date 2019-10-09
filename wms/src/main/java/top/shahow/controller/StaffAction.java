@@ -52,6 +52,14 @@ public class StaffAction {
 		return gson.toJson(flag);
 	}
 	
+	@RequestMapping(value = "validName", method = RequestMethod.POST)
+	@ResponseBody
+	public String validName(String name) {
+		boolean flag = false;
+		Gson gson = new Gson();
+		flag = staffService.validName(name);
+		return gson.toJson(flag);
+	}
 	
 	@RequestMapping(value = "islogin", method = RequestMethod.GET)
 	@ResponseBody

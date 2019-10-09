@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>top.shahow</groupId>
 	<artifactId>wms</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>wms</name>
 	<description>warehouse management system</description>
 

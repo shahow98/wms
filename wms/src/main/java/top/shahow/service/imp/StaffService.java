@@ -118,7 +118,7 @@ public class StaffService implements IStaffService {
 		}else if(borrower != null) {
 			borrowForms = borrowFormDao.findByBorrower_idAndStatus(borrower.getId(), StatusType.APPLY_CONSENT);
 		}else {
-			borrowForms = new ArrayList<BorrowForm>();
+			borrowForms = borrowFormDao.findByStatus(StatusType.APPLY_CONSENT);
 		}
 		return borrowForms;
 	}
@@ -127,6 +127,17 @@ public class StaffService implements IStaffService {
 	public List<BorrowForm> getGiveBackForms() {
 		// TODO Auto-generated method stub
 		return borrowFormDao.findByStatus(StatusType.APPLY_GIVEBACK);
+	}
+
+	@Override
+	public boolean validName(String name) {
+		// TODO Auto-generated method stub
+		boolean flag = false;
+		Staff res = staffDao.findByName(name);
+		if (res == null) {
+			flag = true;
+		}
+		return flag;
 	}
 
 }

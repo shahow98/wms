@@ -56,4 +56,15 @@ public class BorrowerService implements IBorrowerService{
 		return flag;
 	}
 
+	@Override
+	public boolean validName(String name) {
+		// TODO Auto-generated method stub
+		boolean flag = false;
+		Borrower res = borrowerDao.findByName(name);
+		if(res == null) {
+			flag = true;
+		}
+		return flag;
+	}
+
 }

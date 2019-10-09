@@ -182,13 +182,21 @@
 									});
 							}
 						} else {
-							console.log('error submit!!');
+							app.$notify({
+								title: '警告',
+								message: '请正确填写登录信息',
+								type: 'warning',
+								position: 'bottom-right'
+							});
 							return false;
 						}
 					});
 				},
 				resetForm(formName) {
+					var identity = this.$data.ruleForm.identity;
 					this.$refs[formName].resetFields();
+					this.$data.ruleForm.identity = identity;
+					
 				}
 			}
 		})

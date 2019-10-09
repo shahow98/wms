@@ -36,7 +36,7 @@
 					</el-row>
 				</el-header>
 				<el-container>
-					<el-aside width="200px">
+					<el-aside width="200px"  class="wms-aside">
 						<el-menu>
 							<el-submenu index="1" v-if="identity == 'staff'">
 								<template slot="title">
@@ -342,7 +342,6 @@
 						});
 				},
 				refuse(row) {
-					console.log(row);
 					axios.post('/wms/staff/refuseBorrowForm', this.$qs.stringify({
 							borrowFormId: row.id
 						}))
@@ -354,15 +353,35 @@
 						});
 				},
 				giveBack(row) {
-					console.log(row);
 					axios.post('/wms/staff/giveBackForm', this.$qs.stringify({
 							borrowFormId: row.id
 						}))
 						.then(function(response) {
-							console.log(response.data);
+							var res = JSON.parse(response.data);
+							if(res == true){
+								app.$notify({
+									title: '成功',
+									message: '登记成功，货物归还',
+									type: 'success',
+									position: 'bottom-right'
+								});
+								app.getFilterGiveBackForms();
+							}else{
+								app.$notify({
+									title: '错误',
+									message: '登记失败，请重试',
+									type: 'error',
+									position: 'bottom-right'
+								});
+							}
 						})
 						.catch(function(err) {
-							console.log(err)
+							app.$notify({
+								title: '警告',
+								message: '网络连接异常',
+								type: 'warning',
+								position: 'bottom-right'
+							});
 						});
 				},
 				signIn() {
@@ -515,6 +534,10 @@
 		.wms-logo{
 			font-size: 30px;
 			line-height: 60px;
+		}
+		
+		.wms-aside{
+			height: 400px;
 		}
 	</style>
 </html>

@@ -37,6 +37,15 @@ public class BorrowerAction {
 		return gson.toJson(flag);
 	}
 
+	@RequestMapping(value = "validName", method = RequestMethod.POST)
+	@ResponseBody
+	public String validName(String name) {
+		boolean flag = false;
+		Gson gson = new Gson();
+		flag = borrowerService.validName(name);
+		return gson.toJson(flag);
+	}
+	
 	@RequestMapping(value = "register", method = RequestMethod.POST)
 	@ResponseBody
 	public String register(Borrower user) {
@@ -46,7 +55,7 @@ public class BorrowerAction {
 
 		return gson.toJson(flag);
 	}
-
+	
 	@RequestMapping(value = "islogin", method = RequestMethod.GET)
 	@ResponseBody
 	public String isLogin(HttpSession session) {

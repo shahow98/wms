@@ -42,6 +42,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
     }
     
     private class Const{
-    	public static final String NO_INTERCEPTOR_PATH =".*/((.css)|(.js)|(images)|(signin)|(login)|(signup)|(register)).*";
+    	public static final String NO_INTERCEPTOR_PATH =".*/((.css)|(.js)|(images)|(signin)|(login)|(signup)|(register)|(validName)).*";
     }
 }

@@ -9,7 +9,7 @@
 	<body>
 		<div id="app">
 			<el-container>
-				<el-header  class="wms-header">
+				<el-header class="wms-header">
 					<el-row type="flex" justify="space-between">
 						<el-col :span="6">
 							<el-link class="wms-logo" icon="el-icon-box" href="/wms/welcome">仓库管理系统</el-link>
@@ -36,7 +36,7 @@
 					</el-row>
 				</el-header>
 				<el-container>
-					<el-aside width="200px">
+					<el-aside width="200px" class="wms-aside">
 						<el-menu>
 							<el-menu-item index="1" @click="getDeliveryForms">
 								<i class="el-icon-document"></i>
@@ -162,7 +162,7 @@
 								}))
 								.then(function(response) {
 									var res = JSON.parse(response.data);
-									if(res !== null){
+									if (res !== null) {
 										app.$refs[formName].resetFields();
 										app.$notify({
 											title: '成功',
@@ -170,7 +170,7 @@
 											type: 'success',
 											position: 'bottom-right'
 										});
-									}else{
+									} else {
 										app.$refs[formName].resetFields();
 										app.$notify({
 											title: '错误',
@@ -254,6 +254,10 @@
 		.wms-logo {
 			font-size: 30px;
 			line-height: 60px;
+		}
+		
+		.wms-aside{
+			height: 400px;
 		}
 	</style>
 </html>
